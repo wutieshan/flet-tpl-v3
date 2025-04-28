@@ -28,6 +28,7 @@ class AppView:
     def _init_routes(self):
         self.router.add_route("/", lambda: flet.Text("首页"))
         # tools
+        self.router.add_route("/tools/apitest", lambda: flet.Text("Api测试工具"))
         self.router.add_route("/tools/process", lambda: flet.Text("进程管理"))
         self.router.add_route("/tools/service", lambda: flet.Text("服务管理"))
         self.router.add_route("/tools/logs", lambda: flet.Text("日志查看"))
@@ -125,6 +126,7 @@ class AppView:
                         flet.Icons.CONSTRUCTION,
                         "/tools",
                         [
+                            self._create_submenu_item("Api测试", "/tools/apitest"),
                             self._create_submenu_item("进程管理", "/tools/process"),
                             self._create_submenu_item("服务管理", "/tools/service"),
                             self._create_submenu_item("日志查看", "/tools/logs"),
@@ -152,10 +154,12 @@ class AppView:
                     ),
                 ],
                 spacing=5,
+                scroll=flet.ScrollMode.AUTO,
             ),
             width=float(get_sys_config("app.ui", "nav_width")),
             padding=10,
             bgcolor=flet.Colors.BLUE_GREY_50,
+            height=5000,  # TODO: a temp solution, set a very large height
         )
 
     def _create_divider(self) -> flet.GestureDetector:
