@@ -1,0 +1,4 @@
+flet
+peewee
+dynaconf
+psutil>=5.9.0

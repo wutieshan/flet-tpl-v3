@@ -1,0 +1,8 @@
+{
+    "explorer.autoReveal": false,
+
+    "flake8.args": [
+        "--max-line-length=200",
+        "--ignore=E203,E226,E501,F401,F403,F405"
+    ],
+} 

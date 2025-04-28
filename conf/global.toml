@@ -1,0 +1,6 @@
+[default]
+app.debug        = true
+app.secret_key   = "have_a_good_night!"
+app.logger       = "default"
+app.log_filepath = "conf/log.toml"
+app.db_url       = "sqlite:///data/app.sqlite"
