@@ -22,9 +22,9 @@ class AppView:
     def _init_page(self):
         self.page.title = "Flet tpl app v3"
         self.page.theme_mode = flet.ThemeMode.LIGHT
+        self.page.window.center()
         self.page.window.width = float(get_sys_config("app.ui", "window_width"))
         self.page.window.height = float(get_sys_config("app.ui", "window_height"))
-        self.page.window.center()
 
     def _init_routes(self):
         self.router.add_route("/", lambda: flet.Text("首页"))
@@ -187,7 +187,7 @@ class AppView:
 
     def _create_content_area(self) -> flet.Container:
         return flet.Container(
-            content=self.router.navigate("/"),  # 默认显示首页
+            content=self.router.navigate("/"),
             expand=True,
             padding=10,
         )
