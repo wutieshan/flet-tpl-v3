@@ -3,6 +3,7 @@ import flet
 from app.components.router import Router
 from app.db.utils import get_sys_config, set_sys_config
 from app.utils.log_util import log
+from app.view.tools.json_format_view import JsonFormatView
 
 
 class AppView:
@@ -17,7 +18,7 @@ class AppView:
         self.content_area = self._create_content_area()
         self.main_layout = self._create_main_layout()
 
-        self._set_page_on_resized()
+        self._set_window_event()
 
     def _init_page(self):
         self.page.title = "Flet tpl app v3"
@@ -30,6 +31,7 @@ class AppView:
         self.router.add_route("/", lambda: flet.Text("首页"))
         # tools
         self.router.add_route("/tools/apitest", lambda: flet.Text("Api测试工具"))
+        self.router.add_route("/tools/jsonformat", lambda: JsonFormatView().build())
         self.router.add_route("/tools/process", lambda: flet.Text("进程管理"))
         self.router.add_route("/tools/service", lambda: flet.Text("服务管理"))
         self.router.add_route("/tools/logs", lambda: flet.Text("日志查看"))
@@ -128,6 +130,7 @@ class AppView:
                         "/tools",
                         [
                             self._create_submenu_item("Api测试", "/tools/apitest"),
+                            self._create_submenu_item("Json格式化", "/tools/jsonformat"),
                             self._create_submenu_item("进程管理", "/tools/process"),
                             self._create_submenu_item("服务管理", "/tools/service"),
                             self._create_submenu_item("日志查看", "/tools/logs"),
@@ -201,13 +204,14 @@ class AppView:
         self.page.add(self.main_layout)
         return self.main_layout
 
-    def _set_page_on_resized(self):
-        def on_resized(e):
-            set_sys_config("app.ui", "window_width", str(e.width))
-            set_sys_config("app.ui", "window_height", str(e.height))
-            # log.info(f"adjust window size: {e.width}x{e.height}")
+    def _set_window_event(self):
+        def on_event(e: flet.WindowEvent):
+            if e.type == flet.WindowEventType.RESIZED:
+                # log.info(f"window resized: {self.page.window.width}x{self.page.window.height}")
+                set_sys_config("app.ui", "window_width", str(self.page.window.width))
+                set_sys_config("app.ui", "window_height", str(self.page.window.height))
 
-        self.page.on_resized = on_resized
+        self.page.window.on_event = on_event
 
     def _navigate(self, route: str):
         self.content_area.content = self.router.navigate(route)

@@ -1,4 +1,3 @@
 - 系统初始化的时候，检查必要的路径，确保存在
-- realise an api test tool
-- json formatter
+- an api test tool
 - encrypt

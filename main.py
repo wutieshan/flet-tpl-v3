@@ -12,4 +12,4 @@ def main(page: flet.Page):
 if __name__ == "__main__":
     dbm.init_db()
     init_sys_config()
-    flet.app(target=main)
+    flet.app(target=main, view=flet.AppView.FLET_APP_HIDDEN)
