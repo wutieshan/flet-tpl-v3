@@ -3,6 +3,8 @@ import flet
 from app.components.router import Router
 from app.db.utils import get_sys_config, set_sys_config
 from app.utils.log_util import log
+from app.view.homepage import HomepageView
+from app.view.settings.basic_view import BasicView
 from app.view.tools.json_format_view import JsonFormatView
 
 
@@ -28,7 +30,7 @@ class AppView:
         self.page.window.height = float(get_sys_config("app.ui", "window_height"))
 
     def _init_routes(self):
-        self.router.add_route("/", lambda: flet.Text("首页"))
+        self.router.add_route("/", lambda: HomepageView().build())
         # tools
         self.router.add_route("/tools/apitest", lambda: flet.Text("Api测试工具"))
         self.router.add_route("/tools/jsonformat", lambda: JsonFormatView().build())
@@ -40,7 +42,7 @@ class AppView:
         self.router.add_route("/users/roles", lambda: flet.Text("角色管理"))
         self.router.add_route("/users/permissions", lambda: flet.Text("权限设置"))
         # settings
-        self.router.add_route("/settings/basic", lambda: flet.Text("基本设置"))
+        self.router.add_route("/settings/basic", lambda: BasicView().build())
         self.router.add_route("/settings/network", lambda: flet.Text("网络设置"))
         self.router.add_route("/settings/security", lambda: flet.Text("安全设置"))
 
@@ -190,9 +192,10 @@ class AppView:
 
     def _create_content_area(self) -> flet.Container:
         return flet.Container(
-            content=self.router.navigate("/"),
+            # content=self.router.navigate("/"),
+            content=self.router.navigate("/settings/basic"),
             expand=True,
-            padding=10,
+            padding=0,
         )
 
     def _create_main_layout(self) -> flet.Row:
