@@ -1,11 +1,10 @@
+import importlib
+
 import flet
 
 from app.components.router import Router
+from app.config.routes import routes
 from app.db.utils import get_sys_config, set_sys_config
-from app.utils.log_util import log
-from app.view.homepage import HomepageView
-from app.view.settings.basic_view import BasicView
-from app.view.tools.json_format_view import JsonFormatView
 
 
 class AppView:
@@ -30,21 +29,33 @@ class AppView:
         self.page.window.height = float(get_sys_config("app.ui", "window_height"))
 
     def _init_routes(self):
-        self.router.add_route("/", lambda: HomepageView().build())
-        # tools
-        self.router.add_route("/tools/apitest", lambda: flet.Text("Api测试工具"))
-        self.router.add_route("/tools/jsonformat", lambda: JsonFormatView().build())
-        self.router.add_route("/tools/process", lambda: flet.Text("进程管理"))
-        self.router.add_route("/tools/service", lambda: flet.Text("服务管理"))
-        self.router.add_route("/tools/logs", lambda: flet.Text("日志查看"))
-        # users
-        self.router.add_route("/users/list", lambda: flet.Text("用户列表"))
-        self.router.add_route("/users/roles", lambda: flet.Text("角色管理"))
-        self.router.add_route("/users/permissions", lambda: flet.Text("权限设置"))
-        # settings
-        self.router.add_route("/settings/basic", lambda: BasicView().build())
-        self.router.add_route("/settings/network", lambda: flet.Text("网络设置"))
-        self.router.add_route("/settings/security", lambda: flet.Text("安全设置"))
+        """
+        初始化路由, 规则如下:
+            1. 每一条路由规则包含字段:
+                - path
+                - title: 菜单名称
+                - icon: 菜单图标, 仅一级菜单
+                - viewpath: 对应视图模块所在位置, 相对于app.view
+                - view: 视图类名, 要求暴露build()方法用于构建ui
+                - submenu: 子菜单路由
+        """
+        modprefix = "app.view"
+        for route in routes:
+            if route.get("submenus"):
+                for submenu in route["submenus"]:
+                    path = f"{route['path']}{submenu['path']}"
+                    if submenu.get("viewpath"):
+                        mod = importlib.import_module(f"{modprefix}.{submenu['viewpath']}")
+                        self.router.add_route(path, lambda data=submenu["view"]: getattr(mod, data)().build())
+                    else:
+                        self.router.add_route(path, lambda data=path: flet.Text(data))
+            else:
+                path = route["path"]
+                if route.get("viewpath"):
+                    mod = importlib.import_module(f"{modprefix}.{route['viewpath']}")
+                    self.router.add_route(path, lambda data=route["view"]: getattr(mod, data)().build())
+                else:
+                    self.router.add_route(path, lambda data=path: flet.Text(data))
 
     def _create_submenu_item(self, text: str, route: str):
         return flet.Container(
@@ -118,47 +129,17 @@ class AppView:
         )
 
     def _create_nav_bar(self) -> flet.Container:
+        menus = []
+        for route in routes:
+            submenu_items = None
+            if route.get("submenus"):
+                submenu_items = [self._create_submenu_item(submenu["title"], f"{route['path']}{submenu['path']}") for submenu in route["submenus"]]
+
+            menus.append(self._create_nav_item(route["title"], route["icon"], route["path"], submenu_items))
+
         return flet.Container(
             content=flet.Column(
-                controls=[
-                    self._create_nav_item(
-                        "首页",
-                        flet.Icons.HOME,
-                        "/",
-                    ),
-                    self._create_nav_item(
-                        "工具",
-                        flet.Icons.CONSTRUCTION,
-                        "/tools",
-                        [
-                            self._create_submenu_item("Api测试", "/tools/apitest"),
-                            self._create_submenu_item("Json格式化", "/tools/jsonformat"),
-                            self._create_submenu_item("进程管理", "/tools/process"),
-                            self._create_submenu_item("服务管理", "/tools/service"),
-                            self._create_submenu_item("日志查看", "/tools/logs"),
-                        ],
-                    ),
-                    self._create_nav_item(
-                        "用户管理",
-                        flet.Icons.GROUP,
-                        "/users",
-                        [
-                            self._create_submenu_item("用户列表", "/users/list"),
-                            self._create_submenu_item("角色管理", "/users/roles"),
-                            self._create_submenu_item("权限设置", "/users/permissions"),
-                        ],
-                    ),
-                    self._create_nav_item(
-                        "系统设置",
-                        flet.Icons.SETTINGS,
-                        "/settings",
-                        [
-                            self._create_submenu_item("基本设置", "/settings/basic"),
-                            self._create_submenu_item("网络设置", "/settings/network"),
-                            self._create_submenu_item("安全设置", "/settings/security"),
-                        ],
-                    ),
-                ],
+                controls=menus,
                 spacing=5,
                 scroll=flet.ScrollMode.AUTO,
             ),
@@ -192,8 +173,7 @@ class AppView:
 
     def _create_content_area(self) -> flet.Container:
         return flet.Container(
-            # content=self.router.navigate("/"),
-            content=self.router.navigate("/settings/basic"),
+            content=self.router.navigate("/"),
             expand=True,
             padding=0,
         )

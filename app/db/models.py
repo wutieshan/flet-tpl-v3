@@ -39,7 +39,6 @@ class BaseModel(pw.Model):
     def save(self, *args, **kwargs):
         if hasattr(self, "updated_at"):
             self.updated_at = now()
-            # print(f"save: {self.updated_at}")
         return super().save(*args, **kwargs)
 
     @classmethod
@@ -47,7 +46,6 @@ class BaseModel(pw.Model):
         if data is None:
             data = {}
         data["updated_at"] = now()
-        # print(f"update: {data['updated_at']}")
         return super().update(data, **update)
 
 
@@ -75,10 +73,6 @@ class SysConfig(BaseModel):
     enabled = pw.FixedCharField(max_length=1, default=1, help_text="是否启用配置: 0-禁用,1-启用")
     created_at = pw.DateTimeField(default=now)
     updated_at = pw.DateTimeField(default=now)
-
-
-class SysLog(BaseModel):
-    pass
 
 
 tables = [cls for cls in inspect.currentframe().f_globals.values() if inspect.isclass(cls) and cls is not BaseModel]

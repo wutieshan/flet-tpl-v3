@@ -26,3 +26,7 @@ def init_sys_config():
         if not SysConfig.select().where((SysConfig.categroy == config["categroy"]) & (SysConfig.key == config["key"])).exists():
             SysConfig.create(**config)
             log.info(f"create sys config: {config['categroy']}.{config['key']}")
+
+
+def insert_db_default_data():
+    init_sys_config()

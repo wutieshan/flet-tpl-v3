@@ -5,6 +5,7 @@ from playhouse.db_url import connect
 
 from app.config.config import config
 from app.db.models import db_proxy, tables
+from app.db.utils import insert_db_default_data
 from app.utils.log_util import log
 
 
@@ -22,6 +23,7 @@ class DBManager:
             db_proxy.initialize(self.db)
 
             self.create_tables()
+            insert_db_default_data()
             log.info("database initialized successfully")
         except Exception as e:
             log.error(f"failed to initialize database: {e}")
