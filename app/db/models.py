@@ -1,7 +1,10 @@
 import datetime
+import importlib
 import inspect
 
 import peewee as pw
+
+from app.utils.log_util import log
 
 # a placeholder, will be initialized later
 db_proxy = pw.DatabaseProxy()
@@ -48,6 +51,15 @@ class BaseModel(pw.Model):
         data["updated_at"] = now()
         return super().update(data, **update)
 
+    @classmethod
+    def init_default_data(cls):
+        modprefix = "app.db.defaults"
+        try:
+            mod = importlib.import_module(f"{modprefix}.{cls._meta.table_name}")
+            return getattr(mod, "data")
+        except Exception:
+            return []
+
 
 class SysUser(BaseModel):
     """ "系统用户基本信息表"""
@@ -73,6 +85,13 @@ class SysConfig(BaseModel):
     enabled = pw.FixedCharField(max_length=1, default=1, help_text="是否启用配置: 0-禁用,1-启用")
     created_at = pw.DateTimeField(default=now)
     updated_at = pw.DateTimeField(default=now)
+
+    @classmethod
+    def init_default_data(cls):
+        for config in super().init_default_data():
+            if not cls.select().where((cls.categroy == config["categroy"]) & (cls.key == config["key"])).exists():
+                cls.create(**config)
+                log.info(f"create row for {cls.__name__}: {config['categroy']}.{config['key']}")
 
 
 tables = [cls for cls in inspect.currentframe().f_globals.values() if inspect.isclass(cls) and cls is not BaseModel]
