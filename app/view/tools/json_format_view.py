@@ -12,7 +12,7 @@ class JsonFormatView:
             min_lines=10,
             max_lines=10,
             expand=True,
-            border_color=flet.colors.BLUE_GREY_300,
+            border_color=flet.Colors.BLUE_GREY_300,
         )
         self.output_field = flet.TextField(
             label="格式化后的JSON",
@@ -21,11 +21,11 @@ class JsonFormatView:
             max_lines=10,
             expand=True,
             read_only=True,
-            border_color=flet.colors.BLUE_GREY_300,
+            border_color=flet.Colors.BLUE_GREY_300,
         )
         self.error_text = flet.Text(
             value="",
-            color=flet.colors.RED,
+            color=flet.Colors.RED,
             size=14,
         )
 
@@ -62,17 +62,17 @@ class JsonFormatView:
                             flet.ElevatedButton(
                                 "格式化",
                                 on_click=lambda e: self.format_json(e, compress=False),
-                                icon=flet.icons.FORMAT_INDENT_INCREASE,
+                                icon=flet.Icons.FORMAT_INDENT_INCREASE,
                             ),
                             flet.ElevatedButton(
                                 "压缩",
                                 on_click=lambda e: self.format_json(e, compress=True),
-                                icon=flet.icons.COMPRESS,
+                                icon=flet.Icons.COMPRESS,
                             ),
                             flet.ElevatedButton(
                                 "清空",
                                 on_click=self.clear_fields,
-                                icon=flet.icons.CLEAR_ALL,
+                                icon=flet.Icons.CLEAR_ALL,
                             ),
                         ],
                         alignment=flet.MainAxisAlignment.START,

@@ -96,10 +96,10 @@ class AppView:
         def toggle_submenu(e):
             is_expanded.current = not is_expanded.current
             submenu.visible = is_expanded.current
-            icon_control.name = flet.icons.KEYBOARD_ARROW_DOWN if is_expanded.current else flet.icons.KEYBOARD_ARROW_RIGHT
+            icon_control.name = flet.Icons.KEYBOARD_ARROW_DOWN if is_expanded.current else flet.Icons.KEYBOARD_ARROW_RIGHT
             self.nav_bar.update()
 
-        icon_control = flet.Icon(flet.icons.KEYBOARD_ARROW_RIGHT)
+        icon_control = flet.Icon(flet.Icons.KEYBOARD_ARROW_RIGHT)
 
         menu_item = flet.Container(
             content=flet.Row(

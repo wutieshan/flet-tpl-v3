@@ -1,7 +1,7 @@
 This is a template desktop app base on flet
 
 
-## Referencc
+## Reference
 > - [flet官网](https://flet.dev/)
 
 

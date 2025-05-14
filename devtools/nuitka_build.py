@@ -2,7 +2,7 @@ import platform
 import subprocess
 import sys
 
-entrypath = "launch.py"
+entrypath = "main.py"
 options = [
     # https://nuitka.net/doc/api-doc.html
     #
@@ -10,7 +10,7 @@ options = [
     # "--verbose",
     #
     # run immediately once compilation finished
-    "--run",
+    # "--run",
     #
     #
     "--debug",
@@ -20,24 +20,28 @@ options = [
     #
     #
     "--mingw64",
-    "--clang",
+    # "--clang",
     #
     #
     "--standalone",
     #
     #
-    "--output-dir=build",
+    "--output-dir=nuitka-dist",
     #
     #
-    "--include-data-dir=config=config",
+    # "--include-data-dir=config=config",
+    "--include-data-dir=assets=assets",
+    "--include-data-dir=conf=conf",
+    "--include-data-dir=data=",
+    "--include-data-dir=logs=",
     #
     # plugins
-    "--enable-plugin=pyqt6",
+    # "--enable-plugin=pyqt6",
 ]
 options_platform_specified = [
     # windows
     # "--windows-uac-admin",
-    "--windows-console-mode=disable",
+    "--windows-console-mode=force",
 ]
 
 
@@ -56,4 +60,5 @@ if __name__ == "__main__":
         optstr += f" {' '.join(x for x in options_platform_specified if x.startswith(pprefix))}"
 
     command = f"{sys.executable} -m nuitka {optstr} {entrypath}"
+    print(command)
     subprocess.check_call(command)

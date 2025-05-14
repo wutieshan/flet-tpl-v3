@@ -1,0 +1,31 @@
+[project]
+name        = "flet-tpl-v3"
+version     = "0.1.0"
+description = ""
+authors     = [
+    {name = "wutieshan",email = "1766501249@qq.com"}
+]
+readme          = "README.md"
+requires-python = ">=3.12"
+dependencies    = [
+    "flet (>=0.28.2,<0.29.0)",
+    "peewee (>=3.18.1,<4.0.0)",
+    "dynaconf (>=3.2.11,<4.0.0)"
+]
+
+
+[build-system]
+requires      = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.flet]
+org        = ""
+product    = ""
+company    = ""
+copyright  = ""
+
+
+[tool.flet.app]
+path = "."
+module = "main"

@@ -3,3 +3,7 @@ logs/
 data/
 **/__pycache__/
 pkgs/
+build/
+
+# poetry
+poetry.lock
