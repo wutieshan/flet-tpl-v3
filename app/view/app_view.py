@@ -46,7 +46,7 @@ class AppView:
                     path = f"{route['path']}{submenu['path']}"
                     if submenu.get("viewpath"):
                         mod = importlib.import_module(f"{modprefix}.{submenu['viewpath']}")
-                        self.router.add_route(path, lambda data=submenu["view"]: getattr(mod, data)().build())
+                        self.router.add_route(path, lambda data=submenu["view"], mod=mod: getattr(mod, data)().build())
                     else:
                         self.router.add_route(path, lambda data=path: flet.Text(data))
             else:
