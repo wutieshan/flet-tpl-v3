@@ -12,6 +12,7 @@ routes = [
         "icon": "construction",
         "submenus": [
             {"path": "/grafana-data", "title": "grafana数据", "viewpath": "tools.grafana_data_view", "view": "GrafanaDataView"},
+            {"path": "/autoclick", "title": "自动鼠标点击", "viewpath": "tools.autoclick_view", "view": "AutoclickView"},
             {"path": "/apitest", "title": "Api测试", "viewpath": "", "view": ""},
             {"path": "/json-format", "title": "Json格式化", "viewpath": "tools.json_format_view", "view": "JsonFormatView"},
             {"path": "/process", "title": "进程管理", "viewpath": "", "view": ""},
