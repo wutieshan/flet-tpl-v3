@@ -83,4 +83,57 @@ if (numOfAsyncThreads.get() == 0) {
 ```
 
 
-### 4. 
+### 4. jsr223实现: 各线程组执行次数配比
+```groovy
+// setup thread group
+// ===============================================
+int[] ratios_real = [0, 0, 0];
+props.put("ratios_real", ratios_real.join(","));
+
+
+// task alloc jsr223 sampler
+// ===============================================
+import java.util.Arrays;
+
+
+int[] ratios_ideal = [2, 3, 4];
+int ratios_ideal_total = Arrays.stream(ratios_ideal).sum();
+
+// 核心算法
+// 通过当前比例和目标比例做差, 找到差值最小的那一个, 下一个任务就分配给它
+synchronized(props) {
+	// int[] ratios_real = Arrays.stream(props.get("ratios_real").split(",")).map(x -> Integer.parseInt(x)).toArray(); // 如果jmeter版本不支持->写法, 可以使用闭包collect{}
+    int[] ratios_real = Arrays.stream(props.get("ratios_real").split(",")).collect{Integer.parseInt(it)};
+	int ratios_real_total = Arrays.stream(ratios_real).sum();
+
+	int index;
+	if (ratios_real_total == 0) {
+		ratios_real[0]++;
+		index = 0;
+	} else {
+		float minimum = 1;
+		float diff;
+		for (int i = 0; i < ratios_ideal.length; i++) {
+			diff = (float)ratios_real[i] / ratios_real_total - (float)ratios_ideal[i] / ratios_ideal_total;
+			if (diff < minimum) {
+				minimum = diff;
+				index = i;
+			}
+		}
+	}
+	ratios_real[index]++;
+	vars.put("task_index", "${index}")
+	
+	String ratios_real_str = ratios_real.join(",");
+	props.put("ratios_real", ratios_real_str);
+	log.info("==================== ratios_real=${ratios_real_str}")
+}
+
+
+// if-controller
+// ===============================================
+// 通过if-controller判断task_index决定执行哪个任务
+${__jexl3("${task_index}" == "0")}
+${__jexl3("${task_index}" == "2")}
+...
+```
